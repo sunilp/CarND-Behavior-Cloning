@@ -1,16 +1,93 @@
 
 
 ## Project 3 - Behavior Cloning
+-------------------------------
+
+###1. Model Architecture Design
 
 First tried with alexnet to extract, but had issues, so continued with training the model from scrach, 
 referenced from lots of blogs to come up with less loss.
 
+After few iterations, decided with below Model, which utilizes many convolution layers
+
+
+  ![png](model-arch.png)																																																																																		
+																																																																																			
+																																																																																			
+1. Conv Layer with 3 1x1 filter
+2. **6** Conv Layes with 32 3x3 filters followed by Maxpool 2x2 and Dropout layer
+3. **4** Conv Layes with 64 3x3 filters followed by Maxpool 2x2 and Dropout layer
+4. **2** Conv Layes with 128 3x3 filters followed by Maxpool 2x2 and Dropout layer
+5. Flatten for FC layers
+6. Fully Connected layer with 512 neurons followed by Relu activation layer and droupouts
+7. Fully Connected layer with 64 neurons followed by Relu activation layer and droupouts
+8. Fully Connected layer with 16 neurons followed by Relu activation layer and droupouts
+9. Output FC layer
+
+
+###2. Architecture Characteristics
+
+This model starts with 3 1x1 filters , which is good for transforming the color space of image, to choose best colour suited.
+
+It is followed my multiple Conv layers of 32, 64 and 128 with 3x3 filters, this to provide depth of the model, and learning.
+
+At last set of layers, is 3 fully connected layers, of 512, 64 and 16 neurons with relu and droputs to provide sensible classification and generalization of model.
+
+![png](model.png)
+
+###3. Data Preparation
+
+Data is augmented and generated using python generators. So for every epoch, the optimizer practically sees a new and augmented data set.
+
+````{python}
+def generate_train_from_PD_batch(data, batch_size=32):
+    ## Generator for keras training, with subsampling
+    batch_images = np.zeros((batch_size, new_size_row, new_size_col, 3))
+    batch_steering = np.zeros(batch_size)
+    while 1:
+        for i_batch in range(batch_size):
+            i_line = np.random.randint(len(data))
+            line_data = data.iloc[[i_line]].reset_index()
+
+            keep_pr = 0
+            # x,y = preprocess_image_file_train(line_data)
+            while keep_pr == 0:
+                x, y = preprocess_image_file_train(line_data)
+                pr_unif = np.random
+                if abs(y) < .15:
+                    pr_val = np.random.uniform()
+                    if pr_val > pr_threshold:
+                        keep_pr = 1
+                else:
+                    keep_pr = 1
+
+            # x = x.reshape(1, x.shape[0], x.shape[1], x.shape[2])
+            # y = np.array([[y]])
+            batch_images[i_batch] = x
+            batch_steering[i_batch] = y
+        yield batch_images, batch_steering
+
+````
+
+For every batch size, data is randomly sampled and image is preprocessed.
+
+Also, the pre-processing includes, resizing and increasing brightness.
+
+![png](center_2017_01_29_20_15_54_762.jpg)
+
+
+![png](center_2017_01_29_20_15_54_832.jpg)
+
+
+![png](center_2017_01_29_20_15_54_930.jpg)
+
+###4. Model Training
 
 Tried with different size of learning parameter, from 0.001 to 0.0001, and found to keep the learning parameter 0.0001 provides, faster convergence.
 Generated more data and prepossessing, using the same image enhancement suggested by vivek on is blog.
 
 Following were the result of training.
-~~~~
+````
 
 Using TensorFlow backend.
 Starting to train
@@ -97,4 +174,4 @@ Epoch 1/1
 saving model :  model.json  and  model.h5
 Model Saved
 
-~~~~
+````
