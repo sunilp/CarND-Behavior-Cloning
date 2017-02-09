@@ -84,7 +84,7 @@ Also, the pre-processing includes, resizing and increasing brightness.
 ###4. Model Training
 
 Tried with different size of learning parameter, from 0.001 to 0.0001, and found to keep the learning parameter 0.0001 provides, faster convergence.
-Generated more data and prepossessing, using the same image enhancement suggested by vivek on is blog.
+Generated more data and prepossessing..
 
 Following were the result of training.
 ````
@@ -175,3 +175,9 @@ saving model :  model.json  and  model.h5
 Model Saved
 
 ````
+
+### Further
+
+As suggested, will experiment with using other activation functions.
+
+Readings:  Reading the Deep Learning (Adaptive Computation and Machine Learning series) book, by Ian Goodfellow.
